@@ -96,7 +96,16 @@ def parse_games(file, conn, bound_param):
  
     if conn.engine.driver == 'psycopg2':
         conn.execute('DELETE FROM games WHERE game_id LIKE \'%%' + year + '%%\'')
-        conn.execute('COPY games FROM %s WITH CSV HEADER', file)
+        raw_conn = conn.engine.raw_connection()
+        raw_cur = raw_conn.cursor()
+        f = open(file, "r")
+        sql = """
+              COPY games FROM stdin WITH CSV HEADER DELIMITER AS ','
+              """
+        raw_cur.copy_expert(sql=sql,file=f)
+        raw_cur.close()
+        raw_conn.close()
+        f.close()
     else:
         reader = csv.reader(open(file))
         headers = reader.next()
@@ -122,7 +131,18 @@ def parse_events(file, conn, bound_param):
 
     if conn.engine.driver == 'psycopg2':
         conn.execute('DELETE FROM events WHERE game_id LIKE \'%%' + year + '%%\'')
-        conn.execute('COPY events FROM %s WITH CSV HEADER', file)
+
+        raw_conn = conn.engine.raw_connection()
+        raw_cur = raw_conn.cursor()
+        f = open(file, "r")
+        sql = """
+              COPY events FROM stdin WITH CSV HEADER DELIMITER AS ','
+              """
+        raw_cur.copy_expert(sql=sql,file=f)
+        raw_cur.close()
+        raw_conn.close()
+        f.close()
+
         conn.execute('COMMIT')
     else:
         reader = csv.reader(open(file))
