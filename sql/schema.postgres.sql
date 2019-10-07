@@ -274,8 +274,13 @@ CREATE TABLE events (
 CREATE TABLE teams (
 	 team_id text primary key
 	,lg_id text
+	,team_start integer
+	,team_end integer
 	,loc_team_tx text
 	,name_team_tx text
+	,franchise_id text
+	,sequence integer
+
 );
 
 CREATE TABLE rosters (
