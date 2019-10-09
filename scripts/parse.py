@@ -53,6 +53,9 @@ def parse_rosters(file, conn, bound_param):
     reader = csv.reader(open(file))
 
     for row in reader:
+	if len(row) == 1:
+	    continue
+
         row.insert(0, year) # Insert year
 
         sql = 'SELECT * FROM rosters WHERE year = %s AND player_id = %s AND team_tx = %s'
